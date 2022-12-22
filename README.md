@@ -51,9 +51,8 @@ If we want to minimize the squared error in an interval, one must simply define 
 $$
 w(x)=
 \begin{cases}
-    \frac{1}{r-l} &\quad\text{if x}\ge l, \text{x}\le r\\
+    \frac{1}{r-l} &\quad\text{if}\ x \in [l,r]\\
     0 &\quad  \text{otherwise}\\
-
   \end{cases}
 $$
 
@@ -184,3 +183,154 @@ $$\boldsymbol\beta=
     \int_{-\infty}^{\infty} w(x)x^py(x) \ dx\\
 \end{bmatrix}
 $$
+
+
+Interestingly, this matrix can be precomputed, meaning the estimates can be calculated as a linear mapping of the right vector.
+As it only needs to be computed once, each element can be numerically integrated depending on the weight function, but for some
+of them there are solutions:
+
+**Uniform weights in range**
+
+If the weight function has the form:
+
+$$
+w(x)=
+\begin{cases}
+    \frac{1}{r-l} &\quad\text{if}\ x \in [l,r]\\
+    0 &\quad  \text{otherwise}\\
+  \end{cases}
+$$
+
+Each term can be computed directly:
+
+$$\int_{-\infty}^{\infty} w(x)x^k \ dx=\int_{l}^{r} x^k \ dx=\left[\frac{1}{k+1}x^{k+1}\right]_l^r=\frac{r^{k+1}-l^{k+1}}{k+1}$$
+
+Not that it matters much, but since all of them have to be computed up to a certain $k$, a faster recursive formula can be found:
+
+$$\frac{r^{k+1}-l^{k+1}}{k+1}=\frac{(r^k-l^k)\cdot(r+l)}{k+1}=\frac{r+l}{k+1}k\frac{r^l-l^k}{k} $$
+
+**Gaussian weights**
+
+If the weight has the form:
+
+$$w(x)=\frac{1}{\sigma \sqrt{2 \pi }}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}$$
+
+Without loss of generality, if $\mu =0$ then it follows that:
+
+$$\int xw(x)=-\sigma^2 w(x)$$
+
+
+With this information, a recurrence can be established between terms:
+
+$$\int_{-\infty}^{\infty} w(x)x^k \ dx$$
+$$\int_{-\infty}^{\infty} (xw(x)) \cdot(x^{k-1}) \ dx$$
+$$\left[-\sigma^2w(x)x^{k-1} \right]_{-\infty}^{\infty} +(k-1)\cdot \sigma^2 \int_{-\infty}^{\infty} w(x)x^{k-2} \ dx$$
+
+Therefore, we can establish the recurrence equation as:
+
+$$\int_{-\infty}^{\infty} w(x)x^k \ dx=(k-1)\cdot \sigma^2 \int_{-\infty}^{\infty} w(x)x^{k-2} \ dx$$
+
+With base cases:
+
+
+$$\int_{-\infty}^{\infty} w(x)x^0 \ dx=1$$
+$$\int_{-\infty}^{\infty} w(x)x^1 \ dx=0$$
+
+Which leads to the simpler formula:
+
+$$
+\int_{-\infty}^{\infty} w(x)x^k \ dx=
+\begin{cases}
+    (k-1)!!\sigma^k &\quad\text{if $k$ even}\\
+    0 &\quad  \text{otherwise}\\
+  \end{cases}
+$$
+
+Allowing us to precompute the term $\Delta x\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X}$.
+
+Thus, we can obtain the polynomial coefficients as a linear combination of $\Delta x\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{Y}$.
+This can be used in different ways:
+
+### Direct appriximation
+
+If we have enough information about $y(x)$ to obtain analytical expressions or approximations for:
+
+$$\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{Y}\Delta x=
+\begin{bmatrix}
+    \int_{-\infty}^{\infty} w(x)x^0y(x)\ dx\\
+    \int_{-\infty}^{\infty} w(x)x^1y(x) \ dx\\
+    \int_{-\infty}^{\infty} w(x)x^2y(x) \ dx\\
+    \vdots\\
+    \int_{-\infty}^{\infty} w(x)x^py(x) \ dx\\
+\end{bmatrix}
+$$
+
+Then the optimal coefficients can be found.
+
+### Online polynomial regression
+
+Let's imagine we do not know what our target function $y(x)$ looks like, but instead we obtain a series of $(x,y)$ tuples of 
+points belonging to the function. Of course we could store them all and perform the usual regression, but thanks to the previous
+results we can actually maintain only our $p+1$ coefficients in memory and update them with every $(x,y)$, or a set of them, in 
+order to improve the approximation.
+
+Let's assume we have a current approximation $\boldsymbol{\beta}$ of our function, which does define a function on its own:
+
+$$ y(x)'=\beta_0+\beta_1x+\beta_2x^2+ \dots +\beta_px^p $$
+
+So, after recieving a new $(x_i,y_i)$, we can attempt to find coefficients that approximate this very same function, but changing the value at $x_i$:
+
+$$
+y(x)=
+\begin{cases}
+    s(y_i,y(x)',x,x_i,\lambda) &\quad  \text{if $x \in [x_i-\lambda]$}\\
+    y(x)' &\quad\text{if $k$ even}\\
+  \end{cases}
+$$
+
+Where $s(y_i,y(x)',x,\lambda)$ performs a transition from the continuous function $y(x)'$ to the constant $y_i$ in the range $[x_i-\lambda,x_i+\lambda]$. The simplest
+is to just use the constant:
+
+$$s(y_i,y(x)',x,x_i,\lambda)=y_i$$
+
+Or some linear interpolation:
+
+$$s(y_i,y(x)',x,x_i,\lambda)=y(x)'+(y_i-y(x)')\cdot\frac{\lvert x-x_i\rvert}{\lambda}$$
+
+Or any you can think of, what matters is to obtain a new function that is equal to the already approximated with a local change 
+at the newly recieved $(x_i,y_i)$.
+
+If we want to find the difference between the previous $\boldsymbol{\beta}$ and the ones that optimally approximate the new function,
+turns out that we only need the difference between the previous $\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{Y}\Delta x$ and the new one:
+
+$$\Delta (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{Y}\Delta x)=
+\begin{bmatrix}
+    \int_{x_i-\lambda}^{x_i+\lambda} w(x)x^0(s(y_i,y(x)',x,x_i,\lambda)-y(x)')\ dx\\
+    \int_{x_i-\lambda}^{x_i+\lambda} w(x)x^1(s(y_i,y(x)',x,x_i,\lambda)-y(x)')\ dx\\
+    \int_{x_i-\lambda}^{x_i+\lambda} w(x)x^2(s(y_i,y(x)',x,x_i,\lambda)-y(x)')\ dx\\
+    \vdots\\
+    \int_{x_i-\lambda}^{x_i+\lambda} w(x)x^p(s(y_i,y(x)',x,x_i,\lambda)-y(x)')\ dx\\
+\end{bmatrix}
+$$
+
+Which can be approximated in many ways. For example, the simplest way is by the rectangle rule for small $\lambda$:
+
+$$\Delta (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{Y}\Delta x)=
+\begin{bmatrix}
+    2\lambda w(x_i)x_i^0(y_i-y(x)')\ dx\\
+    2\lambda w(x_i)x_i^1(y_i-y(x)')\ dx\\
+    2\lambda w(x_i)x_i^2(y_i-y(x)')\ dx\\
+    \vdots\\
+    2\lambda w(x_i)x_i^p(y_i-y(x)')\ dx\\
+\end{bmatrix}
+$$
+
+Which allows us to find $\Delta \boldsymbol{\beta}$:
+
+$$\Delta \boldsymbol{\beta} =
+(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{Y}\Delta x)^{-1}
+\cdot
+\Delta (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{Y}\Delta x)
+$$
+
+And thus update our coefficients to approximate the previous function while being closer to the given point as well.
