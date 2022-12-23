@@ -328,9 +328,173 @@ $$
 Which allows us to find $\Delta \boldsymbol{\beta}$:
 
 $$\Delta \boldsymbol{\beta} =
-(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{Y}\Delta x)^{-1}
+(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X}\Delta x)^{-1}
 \cdot
 \Delta (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{Y}\Delta x)
 $$
 
 And thus update our coefficients to approximate the previous function while being closer to the given point as well.
+
+
+## Generalized online regression
+
+Let us now consider the case where instead of using a polynomial basis we use arbitrary functions to model the response function:
+
+$$ y(x)=\beta_1f_1(x)+\beta_2f_2(x)+ \dots +\beta_pf_p(x) $$
+
+Which makes the matrix be:
+
+$$\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X}\Delta x=
+\begin{bmatrix}
+    \int_{-\infty}^{\infty} w(x)f_1(x)f_1(x) \ dx&\int_{-\infty}^{\infty} w(x)f_1(x)f_2(x) \ dx&\int_{-\infty}^{\infty} w(x)f_1(x)f_3(x) \ dx&\dots&\int_{-\infty}^{\infty} w(x)f_1(x)f_p(x) \ dx\\
+    \int_{-\infty}^{\infty} w(x)f_2(x)f_1(x) \ dx&\int_{-\infty}^{\infty} w(x)f_2(x)f_2(x) \ dx&\int_{-\infty}^{\infty} w(x)f_2(x)f_3(x) \ dx&\dots&\int_{-\infty}^{\infty} w(x)f_2(x)f_p(x) \ dx\\
+    \int_{-\infty}^{\infty} w(x)f_3(x)f_1(x) \ dx&\int_{-\infty}^{\infty} w(x)f_3(x)f_2(x) \ dx&\int_{-\infty}^{\infty} w(x)f_3(x)f_3(x) \ dx&\dots&\int_{-\infty}^{\infty} w(x)f_3(x)f_p(x) \ dx\\
+    \vdots&\vdots&\vdots&\ddots&\vdots\\
+    \int_{-\infty}^{\infty} w(x)f_p(x)f_1(x) \ dx&\int_{-\infty}^{\infty} w(x)f_p(x)f_2(x) \ dx&\int_{-\infty}^{\infty} w(x)f_p(x)f_3(x) \ dx&\dots&\int_{-\infty}^{\infty} w(x)f_p(x)f_p(x) \ dx\\
+\end{bmatrix}
+$$
+
+These terms can be numerically integrated, but for some combinations of $w(x)$, $f_j(x)$, $f_i(x)$ analytical expressions may be found.
+For now, I will use the following function classes:
+
+**Polynomial**
+
+These are simply powers of $x$:
+
+$$f(x)=x^k$$
+
+**Trig**
+
+Sine and cosine with some frequency:
+
+$$f(x)=cos(kx)$$
+$$f(x)=sin(kx)$$
+
+
+### Matrix elements with Gaussian weight
+
+Following is described how to obtain the analytical expressions for the integral of the product of any pair of function
+classes with the Gaussian weight:
+
+#### Poly-Poly
+
+This one has already been described before:
+
+$$
+\int_{-\infty}^{\infty} w(x)x^{k_1}x^{k_2} \ dx=
+\begin{cases}
+    (k_1+k_2-1)!!\sigma^{k_1+k_2} &\quad\text{if $k_1+k_2$ even}\\
+    0 &\quad  \text{otherwise}\\
+  \end{cases}
+$$
+
+#### Trig-Poly
+
+**Cosine:**
+
+Recursion:
+
+$$ \int_{-\infty}^{\infty} w(x)x^{k_1}cos(k_2x) \ dx$$
+
+$$ \int_{-\infty}^{\infty} (w(x)x)\ (x^{k_1-1}cos(k_2x)) \ dx$$
+
+$$(k_1-1)\cdot \sigma^2 \int_{-\infty}^{\infty} w(x)x^{k_1-2}cos(k_2x) \ dx-k_2\cdot \sigma^2 \int_{-\infty}^{\infty} w(x)x^{k_1-1}sin(k_2x) \ dx$$
+
+
+Base case:
+
+$$ \int_{-\infty}^{\infty} w(x)x^{0}cos(k_2x) \ dx$$
+
+Let:
+
+$$ I(k_2)=\int_{-\infty}^{\infty} w(x)cos(k_2x) \ dx$$
+
+Then:
+
+$$ I'(k_2)=-\int_{-\infty}^{\infty} xw(x)sin(k_2x) \ dx$$
+
+$$ I'(k_2)=+\left[ \sigma^2w(x)sin(k_2x)\right]_{-\infty}^{\infty} -k_2\sigma^2\int_{-\infty}^{\infty} w(x)cos(k_2x) \ dx$$
+
+$$ I'(k_2)=-k_2\sigma^2I(k_2)$$
+
+Which has solution for:
+
+$$I(0)=1$$
+
+$$I(k_2)=e^{-k_2^2\frac{\sigma^2}{2}}$$
+
+**Sine:**
+
+Recursion:
+
+$$ \int_{-\infty}^{\infty} w(x)x^{k_1}sin(k_2x) \ dx$$
+
+$$ \int_{-\infty}^{\infty} (w(x)x)\ (x^{k_1-1}sin(k_2x)) \ dx$$
+
+$$(k_1-1)\cdot \sigma^2 \int_{-\infty}^{\infty} w(x)x^{k_1-2}sin(k_2x) \ dx+k_2\cdot \sigma^2 \int_{-\infty}^{\infty} w(x)x^{k_1-1}cos(k_2x) \ dx$$
+
+Base case:
+
+$$ \int_{-\infty}^{\infty} w(x)x^{0}sin(k_2x) \ dx=0$$
+
+Overall, using the short forms for any $k_2$:
+
+$$C_{k_1}= \int_{-\infty}^{\infty} w(x)x^{k}cos(k_2x) \ dx$$
+
+$$S_{k_1}= \int_{-\infty}^{\infty} w(x)x^{k}sin(k_2x) \ dx$$
+
+The recursive rules can be rewritten:
+
+$$C_{k_1}= +k_2\sigma^2S_{k_1-1}+(k_1-1)\sigma^2C_{k_1-2}$$
+
+$$S_{k_1}= -k_2\sigma^2C_{k_1-1}+(k_1-1)\sigma^2S_{k_1-2}$$
+
+Which allows it to be rewritten as a linear combination:
+
+$$\begin{bmatrix}
+    C_{i-1}\\
+    S_{i-1}\\
+    C_{i}\\
+    S_{i}\\
+\end{bmatrix}=
+\begin{bmatrix}
+    0&0&1&0\\
+    0&0&0&1\\
+    (i-1)\sigma^2&0&1&k_2\sigma^2\\
+    0&(i-1)\sigma^2&-k_2\sigma^2&0\\
+\end{bmatrix}\cdot
+\begin{bmatrix}
+    C_{i-2}\\
+    S_{i-2}\\
+    C_{i-1}\\
+    S_{i-1}\\
+\end{bmatrix}$$
+
+With general expansion to the Bessel polynomial coefficients:
+
+$$\begin{bmatrix}
+    C_{i}\\
+    S_{i}\\
+\end{bmatrix}=
+\begin{cases}
+    \begin{bmatrix}
+        C_1\sigma^i \sum_{j=0}^{n/2}\sigma^{2j} k_2^{2j}\Theta_{i-j,j}\\
+        0\\
+    \end{bmatrix}
+    &
+    \text{If $i$ even}\\
+    \begin{bmatrix}
+    0\\
+    C_1\sigma^{i+1}k_2 \sum_{j=0}^{(n-1)/2}\sigma^{2j} k_2^{2j}\Theta_{i-j,j}\\
+    \end{bmatrix}
+&
+\text{If $i$ odd}
+\end{cases}$$
+
+Where $\Theta_{i,j}$ is the $j^{th}$ coefficient of the $i^{th}$ reverse Bessel polynomial:
+
+$$\Theta_{i,j}=\frac{(i+j)!}{(i-j)!j!2^j}$$
+
+
+#### Trig-Trig
+
