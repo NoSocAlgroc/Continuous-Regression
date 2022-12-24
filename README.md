@@ -33,7 +33,7 @@ with infinite samples can be used for a variety of applications.
 
 Let's look at an initial example of a practical use of the idea. Imagine we have a function
 for which we want to obtain a polynomial approximation between a given range. There are already 
-solution to this problem, like the Legendre approximations used in Legendre Memory Units, among
+solutions to this problem, like the Legendre approximations used in Legendre Memory Units, among
 other applications.
 
 There is, however, a much simpler approach to obtain polynomial approximations, formulating
