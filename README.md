@@ -537,3 +537,6 @@ The folowing table shows the closed form expressions for every pair of function 
 |$\frac{1}{\sigma \sqrt{2 \pi }}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}$|$x^{k_1}$|$x^{k_2}$|$(k_1+k_2-1)!!\sigma^{k_1+k_2}\cdot \mathbf{1}_{2 \| k_1+k_2}$ |
 |$\frac{1}{\sigma \sqrt{2 \pi }}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}$|$x^{k_1}$|$cos(k_2x)$|$e^{-k_2^2\frac{\sigma^2}{2}}\sigma^{k_1} \sum_{j=0}^{n/2}\sigma^{2j} k_2^{2j}\Theta_{k_1-j,j}\cdot \mathbf{1}_{2 \| k_1}$|
 |$\frac{1}{\sigma \sqrt{2 \pi }}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}$|$x^{k_1}$|$sin(k_2x)$|$e^{-k_2^2\frac{\sigma^2}{2}}\sigma^{k_1+1}k_2 \sum_{j=0}^{(n-1)/2}\sigma^{2j} k_2^{2j}\Theta_{k_1-j,j}\cdot \mathbf{1}_{2 \nmid k_1}$|
+|$\frac{1}{\sigma \sqrt{2 \pi }}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}$|$cos(k_1x)$|$cos(k_2x)$|$\frac{1}{2}e^{-{(k_1-k_2)}^2\frac{\sigma^2}{2}}+\frac{1}{2}e^{-{(k_1+k_2)}^2\frac{\sigma^2}{2}}$|
+|$\frac{1}{\sigma \sqrt{2 \pi }}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}$|$cos(k_1x)$|$sin(k_2x)$|$0$|
+|$\frac{1}{\sigma \sqrt{2 \pi }}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}$|$sin(k_1x)$|$sin(k_2x)$|$\frac{1}{2}e^{-{(k_1-k_2)}^2\frac{\sigma^2}{2}}-\frac{1}{2}e^{-{(k_1+k_2)}^2\frac{\sigma^2}{2}}$|
