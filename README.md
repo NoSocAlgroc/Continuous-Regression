@@ -449,6 +449,10 @@ $$C_{k_1}= +k_2\sigma^2S_{k_1-1}+(k_1-1)\sigma^2C_{k_1-2}$$
 
 $$S_{k_1}= -k_2\sigma^2C_{k_1-1}+(k_1-1)\sigma^2S_{k_1-2}$$
 
+With base case:
+
+$$C_0=e^{-k_2^2\frac{\sigma^2}{2}}$$
+
 Which allows it to be rewritten as a linear combination:
 
 $$\begin{bmatrix}
@@ -478,14 +482,14 @@ $$\begin{bmatrix}
 \end{bmatrix}=
 \begin{cases}
     \begin{bmatrix}
-        C_1\sigma^i \sum_{j=0}^{n/2}\sigma^{2j} k_2^{2j}\Theta_{i-j,j}\\
+        C_0\sigma^i \sum_{j=0}^{n/2}\sigma^{2j} k_2^{2j}\Theta_{i-j,j}\\
         0\\
     \end{bmatrix}
     &
     \text{If $i$ even}\\
     \begin{bmatrix}
     0\\
-    C_1\sigma^{i+1}k_2 \sum_{j=0}^{(n-1)/2}\sigma^{2j} k_2^{2j}\Theta_{i-j,j}\\
+    C_0\sigma^{i+1}k_2 \sum_{j=0}^{(n-1)/2}\sigma^{2j} k_2^{2j}\Theta_{i-j,j}\\
     \end{bmatrix}
 &
 \text{If $i$ odd}
@@ -498,3 +502,38 @@ $$\Theta_{i,j}=\frac{(i+j)!}{(i-j)!j!2^j}$$
 
 #### Trig-Trig
 
+**sin-sin**
+
+$$\int_{-\infty}^{\infty} w(x)sin(k_1x)sin(k_2x) \ dx$$
+
+$$\frac{1}{2}\int_{-\infty}^{\infty} w(x)cos((k_1-k_2)x) \ dx-\frac{1}{2}\int_{-\infty}^{\infty} w(x)cos((k_1+k_2)x) \ dx$$
+
+$$\frac{1}{2}I(k_1-k_2)-\frac{1}{2}I(k_1+k_2)$$
+
+$$\frac{1}{2}e^{-{(k_1-k_2)}^2\frac{\sigma^2}{2}}-\frac{1}{2}e^{-{(k_1+k_2)}^2\frac{\sigma^2}{2}}$$
+
+
+**cos-cos**
+
+$$\int_{-\infty}^{\infty} w(x)cos(k_1x)cos(k_2x) \ dx$$
+
+$$\frac{1}{2}\int_{-\infty}^{\infty} w(x)cos((k_1-k_2)x) \ dx+\frac{1}{2}\int_{-\infty}^{\infty} w(x)cos((k_1+k_2)x) \ dx$$
+
+$$\frac{1}{2}I(k_1-k_2)+\frac{1}{2}I(k_1+k_2)$$
+
+$$\frac{1}{2}e^{-{(k_1-k_2)}^2\frac{\sigma^2}{2}}+\frac{1}{2}e^{-{(k_1+k_2)}^2\frac{\sigma^2}{2}}$$
+
+**sin-cos**
+
+$$\int_{-\infty}^{\infty} w(x)cos(k_1x)sin(k_2x) \ dx=0$$
+
+
+### Matrix elements with Gaussian weight: Summary
+
+The folowing table shows the closed form expressions for every pair of function classes:
+
+|$w(x)$   | $f_1(x)$  | $f_2(x)$  |  $\int_{-\infty}^{\infty} w(x)f_1(x)f_2(x) \ dx$ |
+|:-:|:-:|:-:|:-:|
+|$\frac{1}{\sigma \sqrt{2 \pi }}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}$|$x^{k_1}$|$x^{k_2}$|$(k_1+k_2-1)!!\sigma^{k_1+k_2}\cdot \mathbf{1}_{2 \| k_1+k_2}$ |
+|$\frac{1}{\sigma \sqrt{2 \pi }}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}$|$x^{k_1}$|$cos(k_2x)$|$e^{-k_2^2\frac{\sigma^2}{2}}\sigma^{k_1} \sum_{j=0}^{n/2}\sigma^{2j} k_2^{2j}\Theta_{k_1-j,j}\cdot \mathbf{1}_{2 \| k_1}$|
+|$\frac{1}{\sigma \sqrt{2 \pi }}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}$|$x^{k_1}$|$sin(k_2x)$|$e^{-k_2^2\frac{\sigma^2}{2}}\sigma^{k_1+1}k_2 \sum_{j=0}^{(n-1)/2}\sigma^{2j} k_2^{2j}\Theta_{k_1-j,j}\cdot \mathbf{1}_{2 \nmid k_1}$|
