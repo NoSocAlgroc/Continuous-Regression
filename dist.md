@@ -135,3 +135,81 @@ $$\begin{bmatrix}
     \vdots \\
     f_m(t)
 \end{bmatrix}$$
+
+
+### Approximation
+
+First, the following equalities will be useful:
+
+$$\int_{-\infty}^0cos(kx)\frac{1}{\sigma}e^{\frac{x}{\sigma}}=\frac{1}{1+k^2\sigma^2}$$
+
+$$\int_{-\infty}^0sin(kx)\frac{1}{\sigma}e^{\frac{x}{\sigma}}=-\frac{k\sigma}{1+k^2\sigma^2}$$
+
+Which allows the derivation of the elements of $\mathbf{I}_*$:
+
+|$w(x)$   | $f(x)$ |  $\int_{-\infty}^{\infty} f(x)w(x) \ dx$ |
+|:-:|:-:|:-:|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(kx)$|$\frac{1}{1+k^2\sigma^2}$|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$sin(kx)$|$-\frac{k\sigma}{1+k^2\sigma^2}$|
+
+
+And the elements of $\mathbf{I}_{**}$:
+|$w(x)$   | $f_1(x)$  | $f_2(x)$  |  $\int_{-\infty}^{\infty} w(x)f_1(x)f_2(x) \ dx$ |
+|:-:|:-:|:-:|:-:|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$cos(k_2x)$|$\frac{1}{2}\frac{1}{1+(k_1-k_2)^2\sigma^2}+\frac{1}{2}\frac{1}{1+(k_1+k_2)^2\sigma^2}$|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$sin(k_2x)$|$\frac{1}{2}\frac{(k_1+k_2)\sigma}{1+(k_1+k_2)^2\sigma^2}-\frac{1}{2}\frac{(k_1-k_2)\sigma}{1+(k_1-k_2)^2\sigma^2}$|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$cos(k_2x)$|$\frac{1}{2}\frac{1}{1+(k_1-k_2)^2\sigma^2}-\frac{1}{2}\frac{1}{1+(k_1+k_2)^2\sigma^2}$|
+
+### Update
+
+Next, since $T=0$ and it cannot move forward, the whole function needs to go backwards. Essentially, if we go from time $T_1$ to $T_2$, the function needs to move backwards $\Delta t=T_2-T_1$ to move the $0$ from $T_1$ to $T_2$. The new function will satisfy:
+
+$$f'(t)=f'(t+\Delta t)$$
+
+Thus, the coefficients of a given approximation will need to be modified. For a fixed $\Delta t$, we have:
+
+$$ cos(k(t+\Delta t))=cos(kt)cos(k\Delta t)- sin(kt)sin(k\Delta t)$$
+
+$$ sin(k(t+\Delta t))=sin(kt)cos(k\Delta t)+ cos(kt)sin(k\Delta t)$$
+
+Therefore, with basis functions $cos(kt)$ and $sin(kt)$, with coefficients $\beta_1$ and $\beta_2$ that approximate $x(t)$:
+
+$$x(t)=\beta_1cos(kt)+\beta_2sin(kt)$$
+
+$$x(t+\delta t)=\beta_1cos(k(t+\Delta t))+\beta_2sin(k(t+\Delta t))$$
+
+$$x(t+\delta t)=\beta_1(cos(kt)cos(k\Delta t)- sin(kt)sin(k\Delta t))+\beta_2(sin(kt)cos(k\Delta t)+ cos(kt)sin(k\Delta t))$$
+
+The new coefficients are a linear combination of the original:
+$$\begin{bmatrix}
+    \beta_1'\\\beta_2'
+\end{bmatrix}=\begin{bmatrix}
+    cos(k\Delta t)&sin(k\Delta t)\\
+    -sin(k\Delta t)&cos(k\Delta t)\\
+\end{bmatrix}\begin{bmatrix}
+    \beta_1\\\beta_2
+\end{bmatrix}$$
+
+After the update has been performed, a new approximation may be computed with the $\delta t$ having constant value equal to the real $x(t)$. With:
+
+$$\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X}=
+\frac{1}{\Delta x}
+\begin{bmatrix}
+    \int_{-\infty}^{\infty} w(x)f_1(x)f_1(x) \ dx&\int_{-\infty}^{\infty} w(x)f_1(x)f_2(x) \ dx&\int_{-\infty}^{\infty} w(x)f_1(x)f_3(x) \ dx&\dots&\int_{-\infty}^{\infty} w(x)f_1(x)f_p(x) \ dx\\
+    \int_{-\infty}^{\infty} w(x)f_2(x)f_1(x) \ dx&\int_{-\infty}^{\infty} w(x)f_2(x)f_2(x) \ dx&\int_{-\infty}^{\infty} w(x)f_2(x)f_3(x) \ dx&\dots&\int_{-\infty}^{\infty} w(x)f_2(x)f_p(x) \ dx\\
+    \int_{-\infty}^{\infty} w(x)f_3(x)f_1(x) \ dx&\int_{-\infty}^{\infty} w(x)f_3(x)f_2(x) \ dx&\int_{-\infty}^{\infty} w(x)f_3(x)f_3(x) \ dx&\dots&\int_{-\infty}^{\infty} w(x)f_3(x)f_p(x) \ dx\\
+    \vdots&\vdots&\vdots&\ddots&\vdots\\
+    \int_{-\infty}^{\infty} w(x)f_p(x)f_1(x) \ dx&\int_{-\infty}^{\infty} w(x)f_p(x)f_2(x) \ dx&\int_{-\infty}^{\infty} w(x)f_p(x)f_3(x) \ dx&\dots&\int_{-\infty}^{\infty} w(x)f_p(x)f_p(x) \ dx\\
+\end{bmatrix}=\mathbf{I}_{**}
+$$
+
+And:
+
+$$\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{Y}=
+\frac{1}{\Delta x}
+\begin{bmatrix}
+    \int_{-\infty}^{\infty} w(x)f_1(x)y(x)\ dx\\
+    \vdots\\
+    \int_{-\infty}^{\infty} w(x)f_n(x)y(x) \ dx\\
+\end{bmatrix}=\mathbf{I}_*\mathbf{x}(T)
+$$
