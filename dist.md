@@ -154,12 +154,28 @@ Which allows the derivation of the elements of $\mathbf{I}_*$:
 
 
 And the elements of $\mathbf{I}_{**}$:
-|$w(x)$   | $f_1(x)$  | $f_2(x)$  |  $\int_{-\infty}^{\infty} w(x)f_1(x)f_2(x) \ dx$ |
-|:-:|:-:|:-:|:-:|
-|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$cos(k_2x)$|$\frac{1}{2}\frac{1}{1+(k_1-k_2)^2\sigma^2}+\frac{1}{2}\frac{1}{1+(k_1+k_2)^2\sigma^2}$|
-|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$sin(k_2x)$|$\frac{1}{2}\frac{(k_1+k_2)\sigma}{1+(k_1+k_2)^2\sigma^2}-\frac{1}{2}\frac{(k_1-k_2)\sigma}{1+(k_1-k_2)^2\sigma^2}$|
-|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$cos(k_2x)$|$\frac{1}{2}\frac{1}{1+(k_1-k_2)^2\sigma^2}-\frac{1}{2}\frac{1}{1+(k_1+k_2)^2\sigma^2}$|
+|$w(x)$   | $f_1(x)$  | $f_2(x)$  |  $\int_{-\infty}^{\infty} w(x)f_1(x)f_2(x) \ dx$ |or|
+|:-:|:-:|:-:|:-:|:-:|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$cos(k_2x)$|$\frac{1}{2}\frac{1}{1+(k_1-k_2)^2\sigma^2}+\frac{1}{2}\frac{1}{1+(k_1+k_2)^2\sigma^2}$|$\frac{1+(k_1^2+k_2^2)\sigma^2}{(1+(k_1-k_2)^2\sigma^2)(1+(k_1+k_2)^2\sigma^2)}$|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$sin(k_2x)$|$\frac{1}{2}\frac{(k_1+k_2)\sigma}{1+(k_1+k_2)^2\sigma^2}-\frac{1}{2}\frac{(k_1-k_2)\sigma}{1+(k_1-k_2)^2\sigma^2}$|$\frac{\sigma k_2(1-\sigma^2(k_1^2-k_2^2))}{(1+(k_1-k_2)^2\sigma^2)(1+(k_1+k_2)^2\sigma^2)}$|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$cos(k_2x)$|$\frac{1}{2}\frac{1}{1+(k_1-k_2)^2\sigma^2}-\frac{1}{2}\frac{1}{1+(k_1+k_2)^2\sigma^2}$|$\frac{1+(2k_1k_2)\sigma^2}{(1+(k_1-k_2)^2\sigma^2)(1+(k_1+k_2)^2\sigma^2)}$|
 
+
+Or if $k=\frac{p}{\sigma}$:
+
+$\mathbf{I}_{*}$:
+|$w(x)$   | $f(x)$ |  $\int_{-\infty}^{\infty} f(x)w(x) \ dx$ |
+|:-:|:-:|:-:|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(kx)$|$\frac{1}{1+p^{2}}$|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$sin(kx)$|$-\frac{p}{1+p^{2}}$|
+
+
+$\mathbf{I}_{**}$:
+|$w(x)$   | $f_1(x)$  | $f_2(x)$  |  $\int_{-\infty}^{\infty} w(x)f_1(x)f_2(x) \ dx$ |or|
+|:-:|:-:|:-:|:-:|:-:|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$cos(k_2x)$|$\frac{1}{2}\frac{1}{1+(p_1-p_2)^2}+\frac{1}{2}\frac{1}{1+(p_1+p_2)^2}$|$\frac{1+p_1^2+p_2^2}{(1+(p_1-p_2)^2)(1+(p_1+p_2)^2)}$|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$sin(k_2x)$|$\frac{1}{2}\frac{(p_1+p_2)}{1+(p_1+p_2)^2}-\frac{1}{2}\frac{(p_1-p_2)}{1+(p_1-p_2)^2}$|$\frac{p_2(1-(p_1^2-p_2^2))}{(1+(p_1-p_2)^2)(1+(p_1+p_2)^2)}$|
+|$\frac{1}{\sigma}e^{\frac{x}{\sigma}}$|$cos(k_1x)$|$cos(k_2x)$|$\frac{1}{2}\frac{1}{1+(p_1-p_2)^2}-\frac{1}{2}\frac{1}{1+(p_1+p_2)^2}$|$\frac{1+2p_1p_2}{(1+(p_1-p_2)^2)(1+(p_1+p_2)^2)}$|
 ### Update
 
 Next, since $T=0$ and it cannot move forward, the whole function needs to go backwards. Essentially, if we go from time $T_1$ to $T_2$, the function needs to move backwards $\Delta t=T_2-T_1$ to move the $0$ from $T_1$ to $T_2$. The new function will satisfy:
